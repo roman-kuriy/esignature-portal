@@ -252,7 +252,7 @@ describe('QueryProvider cache onError wiring', () => {
     );
 
     await waitFor(() => {
-      expect(assignSpy).toHaveBeenCalledWith(ROUTES.INVALID_CREDENTIAL);
+      expect(assignSpy).toHaveBeenCalledWith(withBasePath(ROUTES.INVALID_CREDENTIAL));
     });
   });
 
@@ -300,7 +300,7 @@ describe('QueryProvider cache onError wiring', () => {
     await user.click(screen.getByRole('button', { name: 'trigger' }));
 
     await waitFor(() => {
-      expect(assignSpy).toHaveBeenCalledWith(ROUTES.INVALID_CREDENTIAL);
+      expect(assignSpy).toHaveBeenCalledWith(withBasePath(ROUTES.INVALID_CREDENTIAL));
     });
   });
 });
