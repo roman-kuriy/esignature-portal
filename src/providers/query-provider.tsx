@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState, type ReactNode } from 'react';
 import { ROUTES } from '@/constants/routes';
 import { isInvalidCredentialError, isServiceOutageError } from '@/lib/api';
+import { stripBasePath, withBasePath } from '@/lib/base-path';
 
 interface QueryProviderProps {
   children: ReactNode;
@@ -18,8 +19,12 @@ export function handleGlobalRequestError(
   redirectToInvalidCredential: () => void,
   redirectToOutage: () => void
 ): void {
-  // Prevent redirect loops if the user is already on one of the error pages.
-  if (pathname === ROUTES.ERROR_PAGE || pathname === ROUTES.INVALID_CREDENTIAL) {
+  const normalizedPathname = stripBasePath(pathname);
+
+  if (
+    normalizedPathname === ROUTES.ERROR_PAGE ||
+    normalizedPathname === ROUTES.INVALID_CREDENTIAL
+  ) {
     return;
   }
 
@@ -29,8 +34,8 @@ export function handleGlobalRequestError(
   }
 
   if (isServiceOutageError(error)) {
-    // Remember where the user was so Refresh can return them there.
-    sessionStorage.setItem(ERROR_RETURN_PATH_KEY, pathname);
+    // Store the route without basePath so router.push() won't double-prefix it.
+    sessionStorage.setItem(ERROR_RETURN_PATH_KEY, normalizedPathname);
     redirectToOutage();
   }
 }
@@ -55,10 +60,10 @@ export function QueryProvider({ children }: QueryProviderProps): ReactNode {
               error,
               window.location.pathname,
               () => {
-                window.location.assign(ROUTES.INVALID_CREDENTIAL);
+                window.location.assign(withBasePath(ROUTES.INVALID_CREDENTIAL));
               },
               () => {
-                window.location.assign(ROUTES.ERROR_PAGE);
+                window.location.assign(withBasePath(ROUTES.ERROR_PAGE));
               }
             );
           },
@@ -73,10 +78,10 @@ export function QueryProvider({ children }: QueryProviderProps): ReactNode {
               error,
               window.location.pathname,
               () => {
-                window.location.assign(ROUTES.INVALID_CREDENTIAL);
+                window.location.assign(withBasePath(ROUTES.INVALID_CREDENTIAL));
               },
               () => {
-                window.location.assign(ROUTES.ERROR_PAGE);
+                window.location.assign(withBasePath(ROUTES.ERROR_PAGE));
               }
             );
           },

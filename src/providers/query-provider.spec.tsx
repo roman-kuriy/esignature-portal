@@ -5,6 +5,7 @@ import React from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { ApiClientError } from '@/lib/api';
 import { ROUTES } from '@/constants/routes';
+import { withBasePath } from '@/lib/base-path';
 import { QueryProvider, handleGlobalRequestError, ERROR_RETURN_PATH_KEY } from './query-provider';
 
 describe('QueryProvider', () => {
@@ -230,7 +231,7 @@ describe('QueryProvider cache onError wiring', () => {
     );
 
     await waitFor(() => {
-      expect(assignSpy).toHaveBeenCalledWith(ROUTES.ERROR_PAGE);
+      expect(assignSpy).toHaveBeenCalledWith(withBasePath(ROUTES.ERROR_PAGE));
     });
   });
 
@@ -275,7 +276,7 @@ describe('QueryProvider cache onError wiring', () => {
     await user.click(screen.getByRole('button', { name: 'trigger' }));
 
     await waitFor(() => {
-      expect(assignSpy).toHaveBeenCalledWith(ROUTES.ERROR_PAGE);
+      expect(assignSpy).toHaveBeenCalledWith(withBasePath(ROUTES.ERROR_PAGE));
     });
   });
 
